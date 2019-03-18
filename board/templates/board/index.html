@@ -1,0 +1,12 @@
+{% extends "layout/head.html" %}
+
+{% block content %}
+<h1>Все объявления</h1>
+{% for ad in ads %}
+<div class="ads">
+    <h2>{{ ad.head}}</h2>
+    <p>{{ ad.text}}</p>
+    <p>{{ ad.date|date:"d.m.Y H:i:s"}}</p>
+</div>
+{% endfor %}
+{% endblock %}

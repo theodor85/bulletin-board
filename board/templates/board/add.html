@@ -1,0 +1,12 @@
+{% extends "layout/head.html" %}
+
+
+{% block content %}
+<h1>Страница добавления элемента</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Добавить">
+</form>
+
+{% endblock %}
