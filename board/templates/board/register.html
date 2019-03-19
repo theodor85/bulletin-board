@@ -2,4 +2,16 @@
 
 {% block content %}
 <h1>Страница регистрации</h1>
+
+{% if user.is_authenticated %}
+    <p>Вы уже зарегистрированы как {{ user.username }}.</p>
+    <p>Нажмите "Выйти", чтобы получить возможность зарегистрировать нового пользователя.</p>
+{% else %}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Зарегистрироваться">
+    </form>
+{% endif %}
+
 {% endblock %}
