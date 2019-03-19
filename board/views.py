@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views.generic.edit import CreateView, FormView
 from django.urls import reverse_lazy
@@ -6,7 +6,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 
 from .models import Board
-from .forms import BoardForm
 
 def index(request):
     ads = Board.objects.order_by('-date')
@@ -18,11 +17,20 @@ def login(request):
 def edit(request):
     return render(request, 'board/edit.html', {})
 
-class BoardCreateView(LoginRequiredMixin, CreateView):
-    template_name = 'board/add.html'
-    form_class = BoardForm
-    success_url = reverse_lazy('index')
-    login_url = '/board/login/'
+def add(request):
+    return render(request, 'board/add.html', {})
+
+def add_item(request):
+    board = Board()
+    board.author = request.user
+    board.head = request.POST['head']
+    board.price = request.POST['price']
+    board.text = request.POST['text']
+    board.save()
+    return render(request, 'board/add_success.html', {})
+
+def delete(request):
+    return render(request, 'board/delete_success.html', {})
 
 class RegisterFormView(FormView):
     

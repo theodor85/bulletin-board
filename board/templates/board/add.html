@@ -3,10 +3,13 @@
 
 {% block content %}
 <h1>Страница добавления элемента</h1>
-<form method="POST">
+<form action="{% url 'add_item' %}" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Добавить">
+    
+    <p><label>Заголовок   </label><input type="text"  name="head"></p>
+    <p><label>Текст объявления   </label><textarea name="text" rows="5"></textarea></p>
+    <p><label>Цена   </label><input type="number" name="price"></p>
+    <p><input type="submit" value="Создать"> </p>
 </form>
 
 {% endblock %}

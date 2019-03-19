@@ -6,7 +6,12 @@
 <div class="ads">
     <h2>{{ ad.head}}</h2>
     <p>{{ ad.text}}</p>
-    <p>{{ ad.date|date:"d.m.Y H:i:s"}}</p>
+    <p>Опубликовано: {{ ad.date|date:"d.m.Y H:i:s"}}</p>
+    <p>Автор: {{ ad.author }}</p>
+    {% if user == ad.author %}
+        <p> <a href="{% url 'edit' %}">Редактировать</a> </p>
+        <p> <a href="{% url 'delete' %}">Удалить</a> </p>
+    {% endif %}
 </div>
 {% endfor %}
 {% endblock %}
