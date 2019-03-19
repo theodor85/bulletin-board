@@ -2,5 +2,26 @@
 
 
 {% block content %}
-<h1>Страница редактирования/удаления элемента</h1>
+<h1>Страница редактирования элемента</h1>
+
+<form action="{% url 'edit_item' item.id %}" method="post">
+        {% csrf_token %}
+        
+        <p>
+            <label>Заголовок   </label>
+            <input type="text"  name="head" value="{{ item.head }}">
+        </p>
+        <p>
+            <label>Текст объявления  </label>
+            <textarea name="text" rows="5" >{{ item.text }}</textarea>
+        </p>
+        <p>
+            <label>Цена  </label>
+            <input type="number" name="price" value="{{ item.price }}">
+        </p>
+        <p>
+            <input type="submit" value="Обновить"> 
+        </p>
+    </form>
+
 {% endblock %}
