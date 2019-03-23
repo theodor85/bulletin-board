@@ -3,15 +3,18 @@
 {% block content %}
 <h1>Все объявления</h1>
 {% for ad in ads %}
-<div class="ads">
-    <h2>{{ ad.head}}</h2>
+
+    <header>
+        <h2 class="tm-blue-text tm-section-title tm-margin-b-45">{{ ad.head}}</h2>
+    </header>
     <p>{{ ad.text}}</p>
-    <p>Опубликовано: {{ ad.date|date:"d.m.Y H:i:s"}}</p>
-    <p>Автор: {{ ad.author }}</p>
+    <p class="price">Цена: {{ ad.price }}</p>
+    <p class="date">Опубликовано: {{ ad.date|date:"d.m.Y H:i:s"}}</p>
+    <p class="author">Автор: {{ ad.author }}</p>
     {% if user == ad.author %}
-        <p> <a href="{% url 'edit' ad.id%}">Редактировать</a> </p>
-        <p> <a href="{% url 'delete' ad.id %}">Удалить</a> </p>
+        <p class="edit"> <a href="{% url 'edit' ad.id%}">Редактировать</a> </p>
+        <p class="edit"> <a href="{% url 'delete' ad.id %}">Удалить</a> </p>
     {% endif %}
-</div>
+
 {% endfor %}
 {% endblock %}

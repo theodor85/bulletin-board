@@ -14,6 +14,6 @@ class Board(models.Model):
         verbose_name = 'Объявление'
         ordering = ['-date']
 
-    def __repr__(self):
+    def __str__(self):
         return self.head
     

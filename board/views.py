@@ -1,9 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from django.views.generic.edit import CreateView, FormView
+from django.views.generic.edit import FormView
+from django.views.generic import View
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from .forms import BoardForm
 
 from .models import Board
 
@@ -22,10 +24,28 @@ def edit(request, item_id):
 def edit_item(request, item_id):
     item = get_object_or_404(Board, pk=item_id)
     item.head = request.POST['head']
-    item.price = request.POST['price']
+    item.price = float(request.POST['price'])
     item.text = request.POST['text']
     item.save()
     return render(request, 'board/edit_success.html', {})
+
+class BoardAdd(View):
+    def get(self, request):
+        form = BoardForm()
+        return render(request, 'board/add.html', {'form': form})
+
+    def post(self, request):     
+        form = BoardForm(request.POST)
+
+        if form.is_valid():
+            new_board = form.save(commit=False)
+            new_board.author = request.user
+            new_board.save()
+            return render(request, 'board/add_success.html', {})
+
+        return render(request, 'board/add.html', {'form': form})
+
+
 
 @login_required(login_url='/board/login/')
 def add(request):
@@ -35,7 +55,7 @@ def add_item(request):
     board = Board()
     board.author = request.user
     board.head = request.POST['head']
-    board.price = request.POST['price']
+    board.price = float(request.POST['price'])
     board.text = request.POST['text']
     board.save()
     return render(request, 'board/add_success.html', {})

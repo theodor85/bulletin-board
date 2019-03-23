@@ -5,6 +5,19 @@ Neaty HTML Template
 http://www.templatemo.com/tm-501-neaty
 
 */
+
+.date{
+	font-weight: italic;
+}
+
+.author{
+	font-weight: italic;
+}
+
+.edit{
+	font-weight: italic;
+}
+
 body {
 	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 	font-size: 20px;
