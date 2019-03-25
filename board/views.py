@@ -3,8 +3,9 @@ from django.http import HttpResponse
 from django.views.generic.edit import FormView
 from django.views.generic import View
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import BoardForm
 
 from .models import Board
@@ -29,12 +30,13 @@ def edit_item(request, item_id):
     item.save()
     return render(request, 'board/edit_success.html', {})
 
-class BoardAdd(View):
+class BoardAdd(LoginRequiredMixin, View):
+    login_url = 'login'
     def get(self, request):
         form = BoardForm()
         return render(request, 'board/add.html', {'form': form})
 
-    def post(self, request):     
+    def post(self, request):
         form = BoardForm(request.POST)
 
         if form.is_valid():
@@ -45,29 +47,24 @@ class BoardAdd(View):
 
         return render(request, 'board/add.html', {'form': form})
 
+class BoardDelete(UserPassesTestMixin, View):
+    """docstring for BoardDelete."""
+    def get(self, request, item_id):
+        item = get_object_or_404(Board, pk=item_id)
+        item.delete()
+        return render(request, 'board/delete_success.html', {})
 
-
-@login_required(login_url='/board/login/')
-def add(request):
-    return render(request, 'board/add.html', {})
-
-def add_item(request):
-    board = Board()
-    board.author = request.user
-    board.head = request.POST['head']
-    board.price = float(request.POST['price'])
-    board.text = request.POST['text']
-    board.save()
-    return render(request, 'board/add_success.html', {})
-
-@login_required(login_url='/board/login/')
-def delete(request, item_id):
-    item = get_object_or_404(Board, pk=item_id)
-    item.delete()
-    return render(request, 'board/delete_success.html', {})
+    def test_func(self):
+        item = get_object_or_404(Board, pk=self.kwargs['item_id'])
+        if item.author == self.request.user:
+            return True
+        elif self.request.user.is_superuser:
+            return True
+        else:
+            return False
 
 class RegisterFormView(FormView):
-    
+
     form_class = UserCreationForm
     success_url = '/board/login/'
     template_name = 'board/register.html'
