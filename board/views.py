@@ -17,18 +17,36 @@ def index(request):
 def login(request):
     return render(request, 'board/login.html', {})
 
-@login_required(login_url='/board/login/')
-def edit(request, item_id):
-    item = get_object_or_404(Board, pk=item_id)
-    return render(request, 'board/edit.html', {'item':item})
+class BoardEdit(UserPassesTestMixin, View):
+    """Контроллер, отвечающий за редактирование элемента."""
 
-def edit_item(request, item_id):
-    item = get_object_or_404(Board, pk=item_id)
-    item.head = request.POST['head']
-    item.price = float(request.POST['price'])
-    item.text = request.POST['text']
-    item.save()
-    return render(request, 'board/edit_success.html', {})
+    def get(self, request, item_id):
+        ''' При GET-запросе возвращаем страницу с формой редактирования элемента. '''
+        item = get_object_or_404(Board, pk=item_id)
+        return render(request, 'board/edit.html', {'item':item})
+
+    def post(self, request, item_id):
+        ''' При POST-запросе сохраняем измененияв БД, предварительно сделав валидацию. '''
+        form = BoardForm(request.POST)
+
+        if form.is_valid():
+            item = get_object_or_404(Board, pk=item_id)
+            item.head = request.POST['head']
+            item.price = float(request.POST['price'])
+            item.text = request.POST['text']
+            item.save()
+            return render(request, 'board/edit_success.html', {})
+
+        return render(request, 'board/edit.html', {'err': 'Ошибка!'})
+
+    def test_func(self):
+        item = get_object_or_404(Board, pk=self.kwargs['item_id'])
+        if item.author == self.request.user:
+            return True
+        elif self.request.user.is_superuser:
+            return True
+        else:
+            return False
 
 class BoardAdd(LoginRequiredMixin, View):
     login_url = 'login'
@@ -48,7 +66,7 @@ class BoardAdd(LoginRequiredMixin, View):
         return render(request, 'board/add.html', {'form': form})
 
 class BoardDelete(UserPassesTestMixin, View):
-    """docstring for BoardDelete."""
+    """Контроллер, отвечающий за удаление элемента."""
     def get(self, request, item_id):
         item = get_object_or_404(Board, pk=item_id)
         item.delete()

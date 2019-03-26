@@ -4,9 +4,9 @@
 {% block content %}
 <h1>Страница редактирования элемента</h1>
 
-<form action="{% url 'edit_item' item.id %}" method="post">
+<form method="post">
         {% csrf_token %}
-        
+        <p>{{ err }}</p>
         <p>
             <label>Заголовок   </label>
             <input type="text"  name="head" value="{{ item.head }}">
@@ -17,11 +17,10 @@
         </p>
         <p>
             <label>Цена  </label>
-            <input type="text" name="price" value="{{ item.price }}"}>
-            {{ item.price }}
+            <input type="number" name="price" value="{{ item.price }}"} step=0.01>
         </p>
         <p>
-            <input type="submit" value="Обновить"> 
+            <input type="submit" value="Обновить">
         </p>
     </form>
 

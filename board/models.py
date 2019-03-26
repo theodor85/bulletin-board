@@ -7,7 +7,7 @@ class Board(models.Model):
     head = models.CharField(max_length=100, verbose_name='Заголовок')
     text = models.TextField(verbose_name='Текст объявления')
     price = models.FloatField(verbose_name='Цена')
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=0) 
+    author = models.ForeignKey(User, on_delete=models.CASCADE, editable=False) 
 
     class Meta:
         verbose_name_plural = 'Объявления'
@@ -16,4 +16,3 @@ class Board(models.Model):
 
     def __str__(self):
         return self.head
-    
