@@ -20,6 +20,7 @@ def login(request):
 class BoardEdit(UserPassesTestMixin, View):
     """Контроллер, отвечающий за редактирование элемента."""
 
+    login_url = 'login'
     def get(self, request, item_id):
         ''' При GET-запросе возвращаем страницу с формой редактирования элемента. '''
         item = get_object_or_404(Board, pk=item_id)
@@ -41,6 +42,7 @@ class BoardEdit(UserPassesTestMixin, View):
 
     def test_func(self):
         item = get_object_or_404(Board, pk=self.kwargs['item_id'])
+
         if item.author == self.request.user:
             return True
         elif self.request.user.is_superuser:
