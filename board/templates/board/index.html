@@ -1,7 +1,8 @@
 {% extends "layout/head.html" %}
 
 {% block content %}
-<h1>Все объявления</h1>
+<h1 class="mb-5">Все объявления</h1>
+
 {% for ad in ads %}
 
     <header>
@@ -12,6 +13,9 @@
     <p class="date">Опубликовано: {{ ad.date|date:"d.m.Y H:i:s"}}</p>
     <p class="author">Автор: {{ ad.author }}</p>
     {% if user == ad.author %}
+        <p class="edit"> <a href="{% url 'edit' ad.id%}">Редактировать</a> </p>
+        <p class="edit"> <a href="{% url 'delete' ad.id %}">Удалить</a> </p>
+    {% elif user.is_superuser %}
         <p class="edit"> <a href="{% url 'edit' ad.id%}">Редактировать</a> </p>
         <p class="edit"> <a href="{% url 'delete' ad.id %}">Удалить</a> </p>
     {% endif %}

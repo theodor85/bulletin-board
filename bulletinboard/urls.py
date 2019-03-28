@@ -19,7 +19,7 @@ from django.urls import include
 from board.urls import index
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('', index, name='index'),
     path('board/', include('board.urls')),
 ]
