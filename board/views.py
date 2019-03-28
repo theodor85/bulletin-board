@@ -7,12 +7,25 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import BoardForm
+from django.core.paginator import Paginator
 
 from .models import Board
 
 def index(request):
+    ''' Первая страница выводит все объявления. Использует пагинатор '''
+
     ads = Board.objects.order_by('-date')
-    return render(request, 'board/index.html', {'ads': ads})
+    paginator = Paginator(ads, 5)
+
+    if 'page' in request.GET:
+        page_num = request.GET['page']
+    else:
+        page_num = 1
+
+    page = paginator.get_page(page_num)
+    context = {'ads': page.object_list, 'page':page, 'paginator':paginator}
+    return render(request, 'board/index.html', context)
+
 
 def login(request):
     return render(request, 'board/login.html', {})
