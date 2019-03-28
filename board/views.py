@@ -23,7 +23,7 @@ def index(request):
         page_num = 1
 
     page = paginator.get_page(page_num)
-    context = {'ads': page.object_list, 'page':page, 'paginator':paginator}
+    context = {'ads': page.object_list, 'page':page, 'page_range':range(1, paginator.num_pages+1)}
     return render(request, 'board/index.html', context)
 
 
