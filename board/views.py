@@ -74,7 +74,7 @@ class BoardEdit(EditDeleteBase):
             item.save()
             return render(request, 'board/edit_success.html', {})
 
-        return render(request, 'board/edit.html', {'err': 'Ошибка!'})
+        return render(request, 'board/edit.html', {'form': form})
 
 
 class BoardAdd(LoginRequiredMixin, View):
@@ -85,6 +85,10 @@ class BoardAdd(LoginRequiredMixin, View):
 
     def post(self, request):
         form = BoardForm(request.POST)
+
+        form.fields['head'].widget.attrs.update({'class': 'form-control'})
+        form.fields['text'].widget.attrs.update({'class': 'form-control'})
+        form.fields['price'].widget.attrs.update({'class': 'form-control'})
 
         if form.is_valid():
             new_board = form.save(commit=False)

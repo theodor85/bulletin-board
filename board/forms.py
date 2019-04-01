@@ -15,4 +15,7 @@ class BoardForm(forms.ModelForm):
         except:
             raise ValidationError('Не удалось преобразовать цену в число!')
 
+        if cleaned_price < 0:
+            raise ValidationError('Цена не может быть отрицательной!')
+
         return cleaned_price
