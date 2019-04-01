@@ -30,14 +30,37 @@ def index(request):
 def login(request):
     return render(request, 'board/login.html', {})
 
-class BoardEdit(UserPassesTestMixin, View):
+class EditDeleteBase(UserPassesTestMixin, View):
+    """Базовый класс для контроллеров BoardEdit и BoardDelete."""
+
+    login_url = 'login' # для класса UserPassesTestMixin - URL переадресации
+                        # на страницу входа
+    def test_func(self):
+        ''' Функция для предоставления доступа к элементу только
+        автору и администратору. '''
+
+        item = get_object_or_404(Board, pk=self.kwargs['item_id'])
+
+        if item.author == self.request.user:
+            return True
+        elif self.request.user.is_superuser:
+            return True
+        else:
+            return False
+
+
+class BoardEdit(EditDeleteBase):
     """Контроллер, отвечающий за редактирование элемента."""
 
-    login_url = 'login'
     def get(self, request, item_id):
         ''' При GET-запросе возвращаем страницу с формой редактирования элемента. '''
         item = get_object_or_404(Board, pk=item_id)
-        return render(request, 'board/edit.html', {'item':item})
+        data = {}
+        data['price'] = item.price
+        data['head'] = item.head
+        data['text'] = item.text
+        form = BoardForm(data)
+        return render(request, 'board/edit.html', {'form':form})
 
     def post(self, request, item_id):
         ''' При POST-запросе сохраняем измененияв БД, предварительно сделав валидацию. '''
@@ -53,15 +76,6 @@ class BoardEdit(UserPassesTestMixin, View):
 
         return render(request, 'board/edit.html', {'err': 'Ошибка!'})
 
-    def test_func(self):
-        item = get_object_or_404(Board, pk=self.kwargs['item_id'])
-
-        if item.author == self.request.user:
-            return True
-        elif self.request.user.is_superuser:
-            return True
-        else:
-            return False
 
 class BoardAdd(LoginRequiredMixin, View):
     login_url = 'login'
@@ -80,21 +94,13 @@ class BoardAdd(LoginRequiredMixin, View):
 
         return render(request, 'board/add.html', {'form': form})
 
-class BoardDelete(UserPassesTestMixin, View):
+class BoardDelete(EditDeleteBase):
     """Контроллер, отвечающий за удаление элемента."""
     def get(self, request, item_id):
         item = get_object_or_404(Board, pk=item_id)
         item.delete()
         return render(request, 'board/delete_success.html', {})
 
-    def test_func(self):
-        item = get_object_or_404(Board, pk=self.kwargs['item_id'])
-        if item.author == self.request.user:
-            return True
-        elif self.request.user.is_superuser:
-            return True
-        else:
-            return False
 
 class RegisterFormView(FormView):
 

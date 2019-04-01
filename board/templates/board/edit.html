@@ -2,26 +2,27 @@
 
 
 {% block content %}
-<h1>Страница редактирования элемента</h1>
+<h1>Страница редактирования объявления</h1>
 
 <form method="post">
-        {% csrf_token %}
-        <p>{{ err }}</p>
-        <p>
-            <label>Заголовок   </label>
-            <input type="text"  name="head" value="{{ item.head }}">
-        </p>
-        <p>
-            <label>Текст объявления  </label>
-            <textarea name="text" rows="5" >{{ item.text }}</textarea>
-        </p>
-        <p>
-            <label>Цена  </label>
-            <input type="number" name="price" value="{{ item.price }}"} step=0.01>
-        </p>
-        <p>
-            <input type="submit" value="Обновить">
-        </p>
-    </form>
+    {% csrf_token %}
+
+    <div class="form-group">
+        {% for field in form %}
+
+            {% if field.errors %}
+                <div class="alert alert-danger">
+                    {{ field.errors }}
+                </div>
+            {% endif %}
+
+            {{ field.label }}
+            {{ field }}
+        {% endfor %}
+    </div>
+
+
+    <p><input type="submit" value="Создать"> </p>
+</form>
 
 {% endblock %}
